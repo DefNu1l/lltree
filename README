@@ -1,0 +1,48 @@
+lltree: Enhanced Tree Listing
+==============================
+
+The lltree command, a fusion of the tree and ll (long listing) 
+commands, is designed to provide an extended and comprehensive 
+view of the file structure. This project aims to augment the tree 
+command by incorporating additional details such as file 
+permissions, user information, and creation dates. By doing so, it 
+offers a swift and dependable solution for visualizing folder
+contents while ensuring no crucial elements are overlooked.
+
+One of the notable features of lltree is its ability to present 
+a clear file structure without requiring administrative privileges. This
+makes it accessible to all users, providing a seamless experience 
+without any compatibility issues.
+
+Usage:
+---
+You don't need to compile anything manually. Just use make to compile
+the source code easily with one command:
+```
+$ make
+``` 
+
+The compiled executable will be saved in a directory called `build`
+To run the lltree executable just type:
+``` 
+$ ./build/lltree
+``` 
+
+You also can define the target path of the directory you want. An example:
+```
+$ ./build/lltree /path/to/your/directory/
+```
+This will show you the informations you need.
+
+To include it to your existing linux commands run:
+```
+$ sudo make install
+```
+
+Once the procedure is complete. There is no need for the build directory.
+Just type:
+```
+lltree
+```
+
+24.11.23
