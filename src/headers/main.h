@@ -13,14 +13,15 @@
 */
 
 
-static int idx = 0;
+static int dir_count = 0;
+static int file_count = 0;
 static struct stat file_stat;
 
 
 static char *owner(const char *filename);
 static char *modd(const char *filename);
 static char *perm(const char *filename);
-static void dirwalk(const char *path, int depth);
+static void dirwalk(const char *path, char *prefix);
 
 
 #endif
