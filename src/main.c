@@ -11,7 +11,7 @@
 
 
 /**
-* lltree - Enhanced Tree Listing, v1.0.0
+* lltree - Enhanced Tree Listing, v1.0.1
 * 
 * lltree is a command-line utility that combines the functionality of the tree
 * and ll (long listing) commands. It provides an extended and comprehensive view
@@ -224,7 +224,7 @@ int main(int argc, char **argv) {
 
 	clock_t start = clock();
 
-	printf("\nLLTree, v1.0.0\n");
+	printf("\nLLTree, v1.0.1\n");
 	printf("\n --- Permissions - Owner - Last Modified - File\n\n");
 	printf("\033[32m%s\033[0m\n", dir);
 	dirwalk(dir, "");
