@@ -133,7 +133,7 @@ static char *perm(const char *filename) {
 }
 
 
-static void walker(char *path, char *prefix) {
+static void dirwalk(char *path, char *prefix) {
 	dir_count++;
 
 
@@ -201,7 +201,7 @@ static void walker(char *path, char *prefix) {
 		free(permission);
 
 		if (dir_ptr->d_type == DT_DIR && eval) {
-			walker(child_path, new_prefix);
+			dirwalk(child_path, new_prefix);
 		} else {
 			file_count++;
 		}
@@ -227,7 +227,7 @@ int main(int argc, char **argv) {
 	printf("\nLLTree, v1.0.0\n");
 	printf("\n --- Permissions - Owner - Last Modified - File\n\n");
 	printf("\033[32m%s\033[0m\n", dir);
-	walker(dir, "");
+	dirwalk(dir, "");
 
 
 	clock_t end = clock();
