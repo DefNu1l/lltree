@@ -35,7 +35,7 @@
 #include "headers/main.h"
 
 
-static char *owner(const char *filename) {
+static char *owner(char *filename) {
 	memset(&file_stat, 0, sizeof(struct stat));
 
 
@@ -56,7 +56,7 @@ static char *owner(const char *filename) {
 }
 
 
-static char *modd(const char *filename) {
+static char *modd(char *filename) {
 	memset(&file_stat, 0, sizeof(struct stat));
 
 	
@@ -95,7 +95,7 @@ static char *modd(const char *filename) {
 }
 
 
-static char *perm(const char *filename) {
+static char *perm(char *filename) {
 	memset(&file_stat, 0, sizeof(struct stat));
 
 	
@@ -133,10 +133,7 @@ static char *perm(const char *filename) {
 }
 
 
-static void dirwalk(char *path, char *prefix) {
-	dir_count++;
-
-
+static void dirwalk(counter_t *counter, char *path, char *prefix) {
 	DIR *dir = opendir(path);
 	if (!dir) {
 		fprintf(stderr, "opendir: %s\n", strerror(errno));
@@ -153,6 +150,9 @@ static void dirwalk(char *path, char *prefix) {
 		exit(EXIT_FAILURE);
 	}
 
+
+	
+	counter->dir_count++;
 
 
 	for (int iter = 0; iter < sc; iter++) {
@@ -201,9 +201,9 @@ static void dirwalk(char *path, char *prefix) {
 		free(permission);
 
 		if (dir_ptr->d_type == DT_DIR && eval) {
-			dirwalk(child_path, new_prefix);
+			dirwalk(counter, child_path, new_prefix);
 		} else {
-			file_count++;
+			counter->file_count++;
 		}
 
 
@@ -222,19 +222,20 @@ int main(int argc, char **argv) {
 	char *dir;
 	argc > 1 ? (dir = argv[1]) : (dir = ".");
 
+	counter_t counter = {0, 0};
 	clock_t start = clock();
 
 	printf("\nLLTree, v1.0.1\n");
 	printf("\n --- Permissions - Owner - Last Modified - File\n\n");
 	printf("\033[32m%s\033[0m\n", dir);
-	dirwalk(dir, "");
+	dirwalk(&counter, dir, "");
 
 
 	clock_t end = clock();
 	double elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
 
 	printf("\n%d directories, %d files, time needed: %fs\n", 
-			dir_count - 1, file_count, elapsed);
+			counter.dir_count - 1, counter.file_count, elapsed);
 
 	return 0;
 }
