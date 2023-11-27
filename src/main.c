@@ -133,90 +133,108 @@ static char *perm(const char *filename) {
 }
 
 
-static void dirwalk(const char *path, int depth) {
-	DIR *dir;
-	if ((dir = opendir(path)) == NULL) {
+static void walker(char *path, char *prefix) {
+	dir_count++;
+
+
+	DIR *dir = opendir(path);
+	if (!dir) {
 		fprintf(stderr, "opendir: %s\n", strerror(errno));
-		return;
+		exit(EXIT_FAILURE);
 	}
 
-	struct dirent *entry;
-	while ((entry = readdir(dir)) != NULL) {
-		if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
-			for (int iter = 0; iter < depth; iter++) {
-				printf("|   ");
-			}
-			if (strncmp(entry->d_name, ".", 1) == 0) {
-				continue;
-			}
-
-			printf("|-- ");
-
-			char fupa[1024];
-			snprintf(fupa, sizeof(fupa), "%s/%s", path, entry->d_name);
+	struct dirent *dir_ptr;
+	struct dirent **child_dir;
 
 
-			char *permission = perm(fupa);
-			char *file_owner = owner(fupa);
-			char *mod_date = modd(fupa);
-			if (entry->d_type == DT_DIR) {
-				printf("%s  %s  %s  \033[34m%s\033[0m\n", permission, file_owner, mod_date, entry->d_name);
+	int sc = scandir(path, &child_dir, NULL, alphasort);
+	if (sc < 0) {
+		fprintf(stderr, "scandir: %s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+
+
+
+	for (int iter = 0; iter < sc; iter++) {
+		dir_ptr = child_dir[iter];
+
+
+		char *ca = "│   ", *cb = "├── ";
+
+		if (iter == (sc - 1)) {
+			cb = "└── ";
+			ca = "    ";
+		}
+
+		char *entry = dir_ptr->d_name;
+		if (entry[0] == '.') {
+			continue;
+		}
+
+
+		char child_path[1024];
+		snprintf(child_path, sizeof(child_path), "%s/%s", path, entry);
+		char new_prefix[1024];
+		snprintf(new_prefix, sizeof(new_prefix), "%s%s", prefix, ca);
+
+
+
+		char *permission = perm(child_path);
+		char *modify_date = modd(child_path);
+		char *file_owner = owner(child_path);
+
+
+		int eval = strcmp(entry, ".") != 0 && strcmp(entry, "..");
+		if (eval != 0) {
+			if (dir_ptr->d_type == DT_DIR) {
+				printf("%s%s%s %s %s \033[34m%s\033[0m\n", 
+					prefix, cb, permission, file_owner, modify_date, entry);
 			}
 			else {
-				printf("%s  %s  %s  %s\n", permission, file_owner, mod_date, entry->d_name);
+				printf("%s%s%s %s %s %s\n", 
+					prefix, cb, permission, file_owner, modify_date, entry);
 			}
+		} 
 
-			idx++;
-			free(permission);
-			free(mod_date);
 
-			if (entry->d_type == DT_DIR) {
-				char new[1024];
-				snprintf(new, sizeof(new), "%s/%s", path, entry->d_name);
-				dirwalk(new, depth + 1);
-			}
+		free(modify_date);
+		free(permission);
+
+		if (dir_ptr->d_type == DT_DIR && eval) {
+			walker(child_path, new_prefix);
+		} else {
+			file_count++;
 		}
+
+
+		free(dir_ptr);
 	}
 
 	closedir(dir);
+	free(child_dir);
+
 }
 
 
+	
+
 int main(int argc, char **argv) {
-	if (argc > 2) {
-		fprintf(stderr, "Usage: %s <path>\n", argv[0]);
-		return -1;
-	}
-
-
-	char *path = NULL;
-	if (argc != 1) {
-		path = argv[1];
-	}
-	else {
-		size_t buffer = 1024;
-		char cwd[buffer];
-		if (getcwd(cwd, (size_t)buffer) == NULL) {
-			fprintf(stderr, "getcwd: %s\n", strerror(errno));
-			return -1;
-		}
-
-		path = strdup(cwd);
-	}
-
+	char *dir;
+	argc > 1 ? (dir = argv[1]) : (dir = ".");
 
 	clock_t start = clock();
 
 	printf("\nLLTree, v1.0.0\n");
-	printf("\n --- Permissions - Owner - Last Modified - File\n\n\033[34m.\033[0m\n");
-
-
-	dirwalk(path, 0);
+	printf("\n --- Permissions - Owner - Last Modified - File\n\n");
+	printf("\033[32m%s\033[0m\n", dir);
+	walker(dir, "");
 
 
 	clock_t end = clock();
 	double elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
-	printf("\nDone, Total: %d, Time needed: %fs\n", idx, elapsed);
-	
+
+	printf("\n%d directories, %d files, time needed: %fs\n", 
+			dir_count - 1, file_count, elapsed);
+
 	return 0;
 }
