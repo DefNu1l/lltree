@@ -21,7 +21,7 @@ static struct stat file_stat;
 static char *owner(const char *filename);
 static char *modd(const char *filename);
 static char *perm(const char *filename);
-static void dirwalk(const char *path, char *prefix);
+static void dirwalk(char *path, char *prefix);
 
 
 #endif
