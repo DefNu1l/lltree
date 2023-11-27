@@ -21,9 +21,9 @@ typedef struct {
 static struct stat file_stat;
 
 
-static char *owner(const char *filename);
-static char *modd(const char *filename);
-static char *perm(const char *filename);
+static char *owner(char *filename);
+static char *modd(char *filename);
+static char *perm(char *filename);
 static void dirwalk(counter_t *counter, char *path, char *prefix);
 
 
