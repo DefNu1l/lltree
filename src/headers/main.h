@@ -13,15 +13,18 @@
 */
 
 
-static int dir_count = 0;
-static int file_count = 0;
+typedef struct {
+	int dir_count;
+	int file_count;	
+} counter_t;
+
 static struct stat file_stat;
 
 
 static char *owner(const char *filename);
 static char *modd(const char *filename);
 static char *perm(const char *filename);
-static void dirwalk(char *path, char *prefix);
+static void dirwalk(counter_t *counter, char *path, char *prefix);
 
 
 #endif
