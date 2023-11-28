@@ -156,7 +156,7 @@ static void dirwalk(counter_t *counter, char *path, char *prefix) {
 	DIR *dir = opendir(path);
 	if (!dir) {
 		fprintf(stderr, "opendir: %s\n", strerror(errno));
-		exit(EXIT_FAILURE);
+		exit(-1);
 	}
 
 	struct dirent *dir_ptr;
@@ -166,7 +166,7 @@ static void dirwalk(counter_t *counter, char *path, char *prefix) {
 	int sc = scandir(path, &child_dir, NULL, alphasort);
 	if (sc < 0) {
 		fprintf(stderr, "scandir: %s\n", strerror(errno));
-		exit(EXIT_FAILURE);
+		exit(-1);
 	}
 
 
