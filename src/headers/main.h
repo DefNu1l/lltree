@@ -5,7 +5,7 @@
 * This is the header file of the lltree main file.
 *
 *
-* lltree - Enhanced Tree Listing, v1.0.1
+* lltree - Enhanced Tree Listing, v1.0.2
 *
 * Author: Def0x00
 * License: BSD 3-Clause License
@@ -24,6 +24,9 @@ static struct stat file_stat;
 static char *owner(char *filename);
 static char *modd(char *filename);
 static char *perm(char *filename);
+static int isowner(char *owner);
+
+
 static void dirwalk(counter_t *counter, char *path, char *prefix);
 
 
