@@ -11,7 +11,7 @@
 
 
 /**
-* lltree - Enhanced Tree Listing, v1.0.1
+* lltree - Enhanced Tree Listing, v1.0.2
 * 
 * lltree is a command-line utility that combines the functionality of the tree
 * and ll (long listing) commands. It provides an extended and comprehensive view
@@ -33,6 +33,25 @@
 
 
 #include "headers/main.h"
+
+
+
+static int isowner(char *owner) {
+	int is_owner;
+	uid_t uid = geteuid();
+	struct passwd *pw = getpwuid(uid);
+	
+
+
+	if (pw == NULL) {
+		return -1;
+	} 
+
+	pw->pw_name == owner ? (is_owner = 1) : (is_owner = 0);
+	
+	
+	return is_owner;
+}
 
 
 static char *owner(char *filename) {
@@ -183,16 +202,28 @@ static void dirwalk(counter_t *counter, char *path, char *prefix) {
 		char *modify_date = modd(child_path);
 		char *file_owner = owner(child_path);
 
+		char colorize_owner[50];
+		int io = isowner(file_owner);
+		if (io) {
+			sprintf(colorize_owner, "\033[32m%s\033[0m", file_owner);
+		}
+		else if (io == -1) {
+			sprintf(colorize_owner, "\033[31mFAILURE\033[0m");
+		}
+		else {
+			sprintf(colorize_owner, "\033[31m%s\033[0m", file_owner);
+		}
+		
 
 		int eval = strcmp(entry, ".") != 0 && strcmp(entry, "..");
 		if (eval != 0) {
 			if (dir_ptr->d_type == DT_DIR) {
-				printf("%s%s%s %s %s \033[34m%s\033[0m\n", 
-					prefix, cb, permission, file_owner, modify_date, entry);
+				printf("%s%s%s %s \033[36m%s\033[0m \033[34m%s\033[0m\n", 
+					prefix, cb, permission, colorize_owner, modify_date, entry);
 			}
 			else {
-				printf("%s%s%s %s %s %s\n", 
-					prefix, cb, permission, file_owner, modify_date, entry);
+				printf("%s%s%s %s \033[36m%s\033[0m %s\n", 
+					prefix, cb, permission, colorize_owner, modify_date, entry);
 			}
 		} 
 
@@ -225,9 +256,9 @@ int main(int argc, char **argv) {
 	counter_t counter = {0, 0};
 	clock_t start = clock();
 
-	printf("\nLLTree, v1.0.1\n");
+	printf("\nLLTree, v1.0.2\n");
 	printf("\n --- Permissions - Owner - Last Modified - File\n\n");
-	printf("\033[32m%s\033[0m\n", dir);
+	printf("Start: \033[32m%s\033[0m\n", dir);
 	dirwalk(&counter, dir, "");
 
 
