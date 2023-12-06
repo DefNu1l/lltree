@@ -218,7 +218,7 @@ static void dirwalk(counter_t *counter, char *path, char *prefix) {
 		int eval = strcmp(entry, ".") != 0 && strcmp(entry, "..");
 		if (eval != 0) {
 			if (dir_ptr->d_type == DT_DIR) {
-				printf("%s%s%s %s \033[36m%s\033[0m \033[34m%s\033[0m\n", 
+				printf("%s%s%s %s \033[36m%s\033[0m \033[1;34m%s\033[0m\n", 
 					prefix, cb, permission, colorize_owner, modify_date, entry);
 			}
 			else {
