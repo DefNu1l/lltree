@@ -197,7 +197,12 @@ static void dirwalk(counter_t *counter, char *path, char *prefix) {
 		snprintf(new_prefix, sizeof(new_prefix), "%s%s", prefix, ca);
 
 
-
+		struct stat link_stat;
+		if (lstat(child_path, &link_stat) == 0 && S_ISLNK(link_stat.st_mode)) {
+			continue; // symbolic link: skip
+		}
+		
+		
 		char *permission = perm(child_path);
 		char *modify_date = modd(child_path);
 		char *file_owner = owner(child_path);
