@@ -21,8 +21,6 @@ typedef struct {
 	int file_count;	
 } counter_t;
 
-//struct stat file_stat;
-
 
 void dirwalk(counter_t *counter, char *path, char *prefix);
 
