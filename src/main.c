@@ -11,7 +11,7 @@
 
 
 /**
-* lltree - Enhanced Tree Listing, v1.0.2
+* lltree - Enhanced Tree Listing, v1.0.3
 * 
 * lltree is a command-line utility that combines the functionality of the tree
 * and ll (long listing) commands. It provides an extended and comprehensive view
@@ -186,19 +186,30 @@ static void dirwalk(counter_t *counter, char *path, char *prefix) {
 		}
 
 		char *entry = dir_ptr->d_name;
-		if (entry[0] == '.') {
-			continue;
+
+
+		if (path[strlen(path) - 1] == '/') {
+			path[strlen(path) - 1] = '\0';
 		}
 
 
-		char child_path[1024];
+		char child_path[PATH_MAX];
 		snprintf(child_path, sizeof(child_path), "%s/%s", path, entry);
-		char new_prefix[1024];
+		char new_prefix[PATH_MAX];
 		snprintf(new_prefix, sizeof(new_prefix), "%s%s", prefix, ca);
+
 
 
 		struct stat link_stat;
 		if (lstat(child_path, &link_stat) == 0 && S_ISLNK(link_stat.st_mode)) {
+			char symlink_dest[PATH_MAX];
+			ssize_t len = readlink(child_path, symlink_dest, sizeof(symlink_dest) - 1);
+			
+
+			if (len != -1) {
+				symlink_dest[len] = '\0'; 
+				printf("%s%s [\033[31msymlink\033[0m] %s -> %s\n", prefix, cb, child_path, symlink_dest);
+			}
 			continue; // symbolic link: skip
 		}
 		
@@ -261,7 +272,7 @@ int main(int argc, char **argv) {
 	counter_t counter = {0, 0};
 	clock_t start = clock();
 
-	printf("\nLLTree, v1.0.2\n");
+	printf("\nLLTree, v1.0.3\n");
 	printf("\n --- Permissions - Owner - Last Modified - File\n\n");
 	printf("Start: \033[32m%s\033[0m\n", dir);
 	dirwalk(&counter, dir, "");
