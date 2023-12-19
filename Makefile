@@ -11,9 +11,12 @@ $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
 install: $(BUILDDIR)/$(TARGET)
-	mv $(BUILDDIR)/$(TARGET) $(INSTALLDIR)
+	sudo mv $(BUILDDIR)/$(TARGET) $(INSTALLDIR)
+
+uninstall: $(INSTALLDIR)/$(TARGET)
+	sudo rm $(INSTALLDIR)/$(TARGET)
 
 clean:
 	rm -rf $(BUILDDIR)
 
-.PHONY: install clean
+.PHONY: uninstall install clean
