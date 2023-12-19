@@ -5,7 +5,7 @@
 * This is the header file of the lltree main file.
 *
 *
-* lltree - Enhanced Tree Listing, v1.0.2
+* lltree - Enhanced Tree Listing, v1.0.3
 *
 * Author: Def0x00
 * License: BSD 3-Clause License
