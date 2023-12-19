@@ -4,8 +4,14 @@ BUILDDIR = build
 TARGET = lltree
 INSTALLDIR = /usr/local/bin
 
-$(BUILDDIR)/$(TARGET): $(SRCDIR)/main.c | $(BUILDDIR)
-	$(CC) $< -o $@
+SOURCES = $(SRCDIR)/lltree.c $(SRCDIR)/fdet.c
+OBJECTS = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SOURCES))
+
+$(BUILDDIR)/$(TARGET): $(OBJECTS) | $(BUILDDIR)
+	$(CC) $(OBJECTS) -o $@
+
+$(BUILDDIR)/%.o: $(SRCDIR)/%.c | $(BUILDDIR)
+	$(CC) -c $< -o $@
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
