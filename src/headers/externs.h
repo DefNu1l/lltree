@@ -4,7 +4,7 @@
 
 
 /**
-* This is the header file of the lltree main file.
+* This is the lltree include manager for the lltree project.
 *
 *
 * lltree - Enhanced Tree Listing, v1.0.3
