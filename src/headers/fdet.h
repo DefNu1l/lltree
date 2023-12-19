@@ -6,7 +6,7 @@
 
 
 /**
-* This is the header file of the lltree main file.
+* This is the header file of the lltree fdet.c file.
 *
 *
 * lltree - Enhanced Tree Listing, v1.0.3
